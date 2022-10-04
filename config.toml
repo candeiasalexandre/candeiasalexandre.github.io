@@ -2,3 +2,37 @@ baseURL = 'https://candeiasalexandre.github.io/'
 languageCode = 'en-us'
 title = 'Alexandre Candeias'
 theme = "color-your-world"
+paginate = 3
+
+[params]
+  
+    # Site description
+    description = "Alexandre Candeias's personal website"
+  
+    # Author
+    author = "Alexandre Candeias"
+    
+    [params.style]
+        # Dark mode as default
+        # User preferences (site/system settings) will still have priority over it
+        # The default is false
+        isDark = true   
+        # Accent colors for dark and light mode respectively
+        darkAccent   = "#1dbc91" # Default is "#1dbc91"
+        lightAccent  = "#1dbc91" # Default is "#1f676b" 
+        # More colors, pick as many as you want (not really sure if there's a limit)
+        # Apparently these may not show up on every modern browser (ie.: Firefox)
+        # There's no default value. Used here just as example
+        presets = []
+
+    [params.social.centralized]
+        github        = ["candeiasalexandre"]
+        gitlab        = ["candeiasalexandre"]
+        linkedin      = ["candeiasalexandre"]
+        twitter       = ["@alexmricandeias"]
+        #entry         = [ "username", "label (optional)" ]
+        
+        # The "entry" here IS important. It's used to load the data.
+
+    [params.social.decentralized]
+        # The "entry" here ISN'T important. It's used for nothing.
