@@ -10,10 +10,8 @@ paginate = 3
     description = "Alexandre Candeias's personal website"
   
     # Author
-    author      = "Alexandre Candeias"
-
-    ImgPath = "img"
-
+    author = "Alexandre Candeias"
+    
     [params.style]
         # Dark mode as default
         # User preferences (site/system settings) will still have priority over it
@@ -28,10 +26,10 @@ paginate = 3
         presets = []
 
     [params.social.centralized]
-        github        = [ "<username>", "candeiasalexandre" ]
-        gitlab        = [ "<username>" , "candeiasalexandre"]
-        linkedin      = [ "<username>" , "candeiasalexandre"]
-        twitter       = [ "<username>", "@alexmricandeias" ]
+        github        = ["candeiasalexandre"]
+        gitlab        = ["candeiasalexandre"]
+        linkedin      = ["candeiasalexandre"]
+        twitter       = ["@alexmricandeias"]
         #entry         = [ "username", "label (optional)" ]
         
         # The "entry" here IS important. It's used to load the data.
