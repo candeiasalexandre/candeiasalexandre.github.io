@@ -1,0 +1,108 @@
+<!doctype html><html lang=en data-mode=dark><head prefix="og: http://ogp.me/ns#"><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=generator content="Hugo 0.104.0"><meta name=theme content="Color Your World -- gitlab.com/rmaguiar/hugo-theme-color-your-world"><title>Multiview 3D reconstruction</title><meta name=author content="Alexandre Candeias"><meta name=description content="Multiview 3D reconstruction"><meta name=robots content="index follow"><link rel=canonical href=https://candeiasalexandre.github.io/posts/multiview-3d-reconstruction/multiview-3d-reconstruction/><meta property="og:site_name" content="Alexandre Candeias"><meta property="og:title" content="Multiview 3D reconstruction"><meta property="og:description" content="Multiview 3D reconstruction"><meta property="og:url" content="https://candeiasalexandre.github.io/posts/multiview-3d-reconstruction/multiview-3d-reconstruction/"><meta property="og:type" content="article"><meta property="article:published_time" content="2022-10-03"><meta property="article:modified_time" content="2022-10-03"><meta property="og:updated_time" content="2022-10-03"><meta name=twitter:creator content="@@alexmricandeias"><meta name=twitter:site content="@@alexmricandeias"><meta name=theme-color content="#222"><meta name=apple-mobile-web-app-capable content="yes"><meta name=apple-mobile-web-app-status-bar-style content="default"><script type=application/ld+json>{"@context":"https://schema.org","@type":"Article","mainEntityOfPage":{"@type":"WebSite","@id":"https://candeiasalexandre.github.io/"},"headline":"Multiview 3D reconstruction","description":"Multiview 3D reconstruction","url":"https://candeiasalexandre.github.io/posts/multiview-3d-reconstruction/multiview-3d-reconstruction/","inLanguage":"en","datePublished":"2022-10-03","dateModified":"2022-10-03","wordCount":"1133","publisher":{"@type":"Person","name":"Alexandre Candeias"},"author":{"@type":"Person","name":"Alexandre Candeias","sameAs":["https://github.com/\u003cusername\u003ecandeiasalexandre","https://gitlab.com/\u003cusername\u003ecandeiasalexandre","https://www.linkedin.com/in/\u003cusername\u003ecandeiasalexandre","https://twitter.com/\u003cusername\u003e@alexmricandeias"]}}</script><link rel=stylesheet href=https://candeiasalexandre.github.io/css/main.min.0fdfc4083ce74c4220dde9973823fb6f232399c52d267396c7039677d981e066.css integrity="sha256-D9/ECDznTEIg3emXOCP7byMjmcUtJnOWxwOWd9mB4GY=" crossorigin=anonymous><noscript><meta name=theme-color content="#1dbc91" media="(prefers-color-scheme: dark)"><meta name=theme-color content="#1dbc91" media="(prefers-color-scheme: light)"><link rel=stylesheet href=https://candeiasalexandre.github.io/css/noscript.min.3f3b95436b19eaeb9223fb12c0b86737d53ee0a47fdba271a886c244bc03975c.css integrity="sha256-PzuVQ2sZ6uuSI/sSwLhnN9U+4KR/26JxqIbCRLwDl1w=" crossorigin=anonymous></noscript><link rel=preload href=/fonts/OpenSans-Bold.ttf as=font crossorigin=anonymous><link rel=preload href=/fonts/OpenSans-Italic.ttf as=font crossorigin=anonymous><link rel=preload href=/fonts/OpenSans-Regular.ttf as=font crossorigin=anonymous><link rel=preload href=/fonts/Oswald-Bold.ttf as=font crossorigin=anonymous><link rel=preload href=/libs/katex@0.16.0/dist/fonts/KaTeX_Main-Regular.woff2 as=font type=font/woff2 crossorigin=anonymous><link rel=preload href=/libs/katex@0.16.0/dist/fonts/KaTeX_Math-Italic.woff2 as=font type=font/woff2 crossorigin=anonymous><link rel=preload href=/libs/katex@0.16.0/dist/fonts/KaTeX_Size2-Regular.woff2 as=font type=font/woff2 crossorigin=anonymous><link rel=preload href=/libs/katex@0.16.0/dist/fonts/KaTeX_Size4-Regular.woff2 as=font type=font/woff2 crossorigin=anonymous><link rel=me href=https://github.com/%3cusername%3ecandeiasalexandre><link rel=me href=https://gitlab.com/%3cusername%3ecandeiasalexandre><link rel=me href=https://www.linkedin.com/in/%3cusername%3ecandeiasalexandre><link rel=me href=https://twitter.com/%3cusername%3e@alexmricandeias><script src=https://candeiasalexandre.github.io/js/main.7f81509e06270aca2bcac37d12fc87e942ba3be23215aa23d4162b2217f3248a.js integrity="sha256-f4FQngYnCsorysN9EvyH6UK6O+IyFaoj1BYrIhfzJIo=" crossorigin=anonymous></script></head><body><header><a href=/>Alexandre Candeias</a></header><div class=filler><main><article><header><h1>Multiview 3D reconstruction</h1><p>Published on <time datetime=2022-10-03>2022-10-03</time></p></header><p>3D reconstruction deals with the problem of recovering 3D geometry from sparse measurements of 2D points. This means that from a set of points in 2D images, taken from different views, we are interested in recovering the actual 3D coordinates of those points.</p><p>Lately this problem has received more interest from the industry, with the emergence of checkout-free solutions in retail such as <a href="https://www.amazon.com/b?ie=UTF8&node=16008589011">Amazon-Go</a>, <a href=https://www.sensei.tech/>Sensei</a>, <a href=https://aifi.com/>AiFi</a> or <a href=https://www.trigoretail.com/>Trigo</a>.</p><p>Without loss of generality, in this post we will focus on the reconstruction of 3D points that come from human body joints (or human body keypoints).</p><p>We will <strong>not discuss</strong> the detection of human body keypoints in a 2D image (known as Human Keypoint Estimation). If you are interested you can find more information <a href=https://learnopencv.com/human-pose-estimation-using-keypoint-rcnn-in-pytorch/>here</a>.</p><h2 id=problem-definition><a class=anchor href=#problem-definition title='Anchor for: Problem Definition.'><svg aria-hidden="true"><use xlink:href="/img/bundle.min.051eb5a3ff25c1d041352b9054013bb6.svg#hashtag"/></svg></a>Problem Definition</h2><p>Assume that we have a (calibrated) network of $N$cameras $(C_1, C_2, …, C_N)$, each camera captures an image of a human body. After human keypoint estimation, we have access to $K$2D points in each image, as represented in green on image (1). For example, the 2D points in the images provided by camera $C_1$are represented by the matrix $P_{2d}^{C_1} \in \R^{2 \times K}$.</p><p>The problem of Multiview 3D reconstruction uses the 2D information present in each camera image $(P_{2d}^{C_1}, P_{2d}^{C_2}, &mldr;, P_{2d}^{C_N})$ to reconstruct the 3D points $P_{3d} \in \R^{3 \times K}$ which are represented in red in the image (1).</p><p><img loading=lazy src=/posts/multiview-3d-reconstruction/img/image_1.png alt="Image 1: Multiview 3D human keypoints reconstruction."></p><p>Image 1: Multiview 3D human keypoints reconstruction.</p><h2 id=camera-model><a class=anchor href=#camera-model title='Anchor for: Camera Model.'><svg aria-hidden="true"><use xlink:href="/img/bundle.min.051eb5a3ff25c1d041352b9054013bb6.svg#hashtag"/></svg></a>Camera Model</h2><p>Before discussing how we can perform 3D reconstruction, it is worth to study how is the mathematical formulation of a simple (<a href=https://en.wikipedia.org/wiki/Pinhole_camera>pin-hole</a>) camera.</p><p>A camera is a mathematical transformation that projects points from the 3D world in 2D. For a given 3D point in the camera reference frame, $p_{3d} \in \R^3$ , it can be defined as the function:</p><p>$$
+f(p_{3d}) = p_{2d} \in \R^{2} =
+\begin{bmatrix}
+u \\
+v
+\end{bmatrix} =
+\begin{bmatrix}
+\frac{{k_{1}}^T p_{3d}}{{k_{3}}^T p_{3d}} \\
+\frac{{k_{2}}^T p_{3d}}{{k_{3}}^T p_{3d}}
+\end{bmatrix}
+$$</p><p>where $k_1, k_2, k_3 \in \R^{3}$ are the so called camera intrinsic parameters. You can think of them as parameters provided by the camera manufacturer. To learn more about camera intrinsic parameters check <a href=https://ksimek.github.io/2013/08/13/intrinsic/>here</a>.</p><p>The equation above assumes that the 3D point, $p_{3d}$ , is in the same coordinate system as the camera. If we are representing the 3D points in another coordinate system (lets call it $W$ ) we need to know the transformation between that coordinate system and the camera coordinate system.
+This transformation can be represented by the rotation matrix $ R_{W}^{C} \in \R^{3 \times 3}$ and the translation vector $t_{W}^{C} \in \R^{3}$ . In this case the equation above becomes:</p><p>$$
+f(p_{3d}^{W}) = p_{2d} \in \R^{2} = \begin{bmatrix}
+u \\
+v
+\end{bmatrix} =
+\begin{bmatrix}
+\frac{{k_{1}}^T (R_{W}^{C} p_{3d} + t^C_W)}{{k_{3}}^T (R_{W}^{C} p_{3d} + t^C_W)} \\
+\frac{{k_{2}}^T (R_{W}^{C} p_{3d} + t^C_W)}{{k_{3}}^T (R_{W}^{C} p_{3d} + t^C_W)}
+\end{bmatrix}
+$$</p><p>By looking at the equations above we see an intrinsic property of a camera: it is impossible to recover the full 3D point coordinates with access to a single observation of a 2D point in an Image.</p><p>However, we can solve the above equations with respect to $p_{3d}$ , i.e an undetermined linear system with 2 equations and 3 unknowns ($x, y, z$, which are the coordinates of $p_{3d}$ ), and get a 3D ray which contains all the 3D points that respect the 2 equations.</p><h2 id=stereo-reconstruction><a class=anchor href=#stereo-reconstruction title='Anchor for: Stereo Reconstruction.'><svg aria-hidden="true"><use xlink:href="/img/bundle.min.051eb5a3ff25c1d041352b9054013bb6.svg#hashtag"/></svg></a>Stereo Reconstruction</h2><p>Before discussing the general $N$ views case, we will discuss the scenario where you have $2$ views, i.e two cameras, looking at a 3D point as shown in image 2.</p><p><img loading=lazy src=/posts/multiview-3d-reconstruction/img/image_2.png alt="Image 2: Stereo Reconstruction"></p><p>Image 2: Stereo Reconstruction</p><p>The equations that we discussed before will be for this case:</p><p>$$
+p_{2d}^{C_1} = \begin{bmatrix}
+u_{C_1} \\
+v_{C_1}
+\end{bmatrix} =
+\begin{bmatrix}
+\frac{{k_{1}^{C_1}}^T (R_{W}^{C_1} p_{3d} + t_W^{C_1})}{{k_{3}^{C_1}}^T (R_{W}^{C_1} p_{3d} + t_W^{C_1})} \\
+\frac{{k_{2}^{C_1}}^T (R_{W}^{C_1} p_{3d} + t_W^{C_1})}{{k_{3}^{C_1}}^T (R_{W}^{C_1} p_{3d} + t_W^{C_1})}
+\end{bmatrix}
+$$</p><p>$$
+p_{2d}^{C_2} = \begin{bmatrix}
+u_{C_2} \\
+v_{C_2}
+\end{bmatrix} =
+\begin{bmatrix}
+\frac{{k_{1}^{C_2}}^T (R_{W}^{C_2} p_{3d} + t_W^{C_2})}{{k_{3}^{C_2}}^T (R_{W}^{C_2} p_{3d} + t_W^{C_2})} \\
+\frac{{k_{2}^{C_2}}^T (R_{W}^{C_2} p_{3d} + t_W^{C_2})}{{k_{3}^{C_2}}^T (R_{W}^{C_2} p_{3d} + t_W^{C_2})}
+\end{bmatrix}
+$$</p><p>By having access to two views of the same 3D point we can construct a system of 4 equations and 3 unknowns. This overdetermined linear system, $Ax=b$, can be solved in the least squares sense.</p><p>To transform the above equations in the form $Ax=b$, we can proceed as follows:</p><p>$$
+\begin{bmatrix}
+u_{C_1} {k_{3}^{C_1}}^T (R_{W}^{C_1} p_{3d} + t_W^{C_1})
+\\
+v_{C_1} {k_{3}^{C_1}}^T (R_{W}^{C_1} p_{3d} + t_W^{C_1})
+\\
+u_{C_2} {k_{3}^{C_2}}^T (R_{W}^{C_2} p_{3d} + t_W^{C_2})
+\\
+v_{C_2} {k_{3}^{C_2}}^T (R_{W}^{C_2} p_{3d} + t_W^{C_2})
+\end{bmatrix} =
+\begin{bmatrix}
+{k_{1}^{C_1}}^T (R_{W}^{C_1} p_{3d} + t_W^{C_1})
+\\
+{k_{2}^{C_1}}^T (R_{W}^{C_1} p_{3d} + t_W^{C_1})
+\\
+{k_{1}^{C_2}}^T (R_{W}^{C_2} p_{3d} + t_W^{C_2})
+\\
+{k_{2}^{C_2}}^T (R_{W}^{C_2} p_{3d} + t_W^{C_2})
+\end{bmatrix}
+$$</p><p>$$
+\equiv
+\begin{bmatrix}
+u_{C_1} ( {k_{3}^{C_1}}^T R_{W}^{C_1} - {k_{1}^{C_1}}^T R_{W}^{C_1} )
+\\
+v_{C_1} ( {k_{3}^{C_1}}^T R_{W}^{C_1} - {k_{2}^{C_1}}^T R_{W}^{C_1} )
+\\
+u_{C_2} ( {k_{3}^{C_2}}^T R_{W}^{C_2} - {k_{1}^{C_2}}^T R_{W}^{C_2} )
+\\
+v_{C_2} ( {k_{3}^{C_2}}^T R_{W}^{C_2} - {k_{2}^{C_2}}^T R_{W}^{C_2} )
+\end{bmatrix} p_{3d} =
+\begin{bmatrix}
+( {k_{1}^{C_1}}^T - u_{C_1} {k_{3}^{C_1}}^T ) t_{W}^{C_1}
+\\
+( {k_{2}^{C_1}}^T - v_{C_1} {k_{3}^{C_1}}^T ) t_{W}^{C_1}
+\\
+( {k_{1}^{C_2}}^T - u_{C_2} {k_{3}^{C_2}}^T ) t_{W}^{C_2}
+\\
+( {k_{2}^{C_2}}^T - v_{C_2} {k_{3}^{C_2}}^T ) t_{W}^{C_2}
+\end{bmatrix}
+$$</p><p>$$
+\equiv A p_{3d} = b
+$$</p><p>Which by solving it in the least squares sense gives the 3D point $p_{3d} = (A^T A)^{-1} A^T b$.</p><h2 id=multiview-reconstruction><a class=anchor href=#multiview-reconstruction title='Anchor for: Multiview Reconstruction.'><svg aria-hidden="true"><use xlink:href="/img/bundle.min.051eb5a3ff25c1d041352b9054013bb6.svg#hashtag"/></svg></a>Multiview Reconstruction</h2><p>To generalize the two views scenario to multiple views it will be straightforward. Every view will give us a pair of equations so we can write the following system of equations:</p><p>$$
+\begin{bmatrix}
+u_{C_1} ( {k_{3}^{C_1}}^T R_{W}^{C_1} - {k_{1}^{C_1}}^T R_{W}^{C_1} )
+\\
+v_{C_1} ( {k_{3}^{C_1}}^T R_{W}^{C_1} - {k_{2}^{C_1}}^T R_{W}^{C_1} )
+\\
+&mldr;
+\\
+u_{C_N} ( {k_{3}^{C_N}}^T R_{W}^{C_N} - {k_{1}^{C_N}}^T R_{W}^{C_N} )
+\\
+v_{C_N} ( {k_{3}^{C_N}}^T R_{W}^{C_N} - {k_{2}^{C_N}}^T R_{W}^{C_N} )
+\end{bmatrix} p_{3d} =
+\begin{bmatrix}
+({k_{1}^{C_1}}^T - u_{C_1} {k_{3}^{C_1}}^T ) t_W^{C_1}
+\\
+({k_{2}^{C_1}}^T - v_{C_1} {k_{3}^{C_1}}^T ) t_W^{C_1}
+\\
+({k_{1}^{C_N}}^T - u_{C_N} {k_{3}^{C_N}}^T ) t_W^{C_N}
+\\
+({k_{2}^{C_N}}^T - v_{C_N} {k_{3}^{C_N}}^T ) t_W^{C_N}
+\end{bmatrix}
+$$</p><p>Again, this system of $2N$ equations and $3$ unknowns can be solved in the least squares sense.</p><p>Since we assumed that we have a calibrated camera network, that means that we have access to the parameters $R_{W}^{C_i}, t_{W}^{C_i}, k_1^{C_i}, k_2^{C_i}, k_3^{C_i}$. $R, t$ are the so called extrinsic parameters and $k_1, k_2, k_3$ the intrinsic parameters. To learn more about how to obtain these parameters you can check <a href=https://people.cs.rutgers.edu/~elgammal/classes/cs534/lectures/Calibration.pdf>here</a><strong>.</strong></p><p>Now that we know how to solve 3D reconstruction given multiple views for a single 3D point, we can apply it to reconstruct $K$human body keypoints given its 2D measures in different images.</p><p>Since we have $K$human body keypoints, we simply need to construct $K$ of the systems of equations presented before:</p><p>$$
+A^1 p_{3d}^{1} = b^1 \\
+&mldr; \\
+A^K p_{3d}^{K} = b^K
+$$</p><p>All of these systems can be solved in parallel since they are all independent and we would recover all the $P_{3d} \in \R^{3 \times K}$ points.</p></article></main></div><footer><div class=req-js><button class=outline-dashed title="Change to light/dark mode."><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><use xlink:href="/img/bundle.min.051eb5a3ff25c1d041352b9054013bb6.svg#adjust"/></svg></button><input class=outline-dashed type=color list=presets value=#1dbc91 title="Change accent color." aria-label="Change accent color."><datalist id=presets><option value=#1dbc91></datalist></div></footer><link rel=stylesheet href=https://candeiasalexandre.github.io/libs/katex@0.16.0/dist/katex.min.6950e59dbd8dfddd111390d85888bb5f9dc2e9c334da7ac1c3bacc92a695610d.css integrity="sha256-aVDlnb2N/d0RE5DYWIi7X53C6cM02nrBw7rMkqaVYQ0=" crossorigin=anonymous><script defer src=https://candeiasalexandre.github.io/libs/katex@0.16.0/dist/katex.min.e7c837339f838404f20674bf6c066a479026575ac8314ba5f2e35156e4591226.js integrity="sha256-58g3M5+DhATyBnS/bAZqR5AmV1rIMUul8uNRVuRZEiY=" crossorigin=anonymous></script>
+<script defer src=https://candeiasalexandre.github.io/libs/katex@0.16.0/dist/contrib/mhchem.min.b693877566e4d7179120e1ff9ee007af91fdda764fed15f47a0f384433544860.js integrity="sha256-tpOHdWbk1xeRIOH/nuAHr5H92nZP7RX0eg84RDNUSGA=" crossorigin=anonymous></script>
+<script defer src=https://candeiasalexandre.github.io/libs/katex@0.16.0/dist/contrib/copy-tex.min.3bc3978c11fdd1ccebd83687e41d1a35adde9998ca6d2a630eff53fb9ea73040.js integrity="sha256-O8OXjBH90czr2DaH5B0aNa3emZjKbSpjDv9T+56nMEA=" crossorigin=anonymous></script>
+<script defer src=https://candeiasalexandre.github.io/js/katex-custom-render.min.e642deed57e2029089e43c36d322ad7e365664d88ea56f9be51631877e2c67d0.js integrity="sha256-5kLe7VfiApCJ5Dw20yKtfjZWZNiOpW+b5RYxh34sZ9A=" crossorigin=anonymous></script></body></html>
