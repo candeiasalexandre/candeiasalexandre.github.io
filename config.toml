@@ -1,6 +1,6 @@
 baseURL = 'https://candeiasalexandre.github.io/'
 languageCode = 'en-us'
-title = 'Alexandre Candeias'
+title = ''
 theme = "color-your-world"
 paginate = 3
 
@@ -36,3 +36,17 @@ paginate = 3
 
     [params.social.decentralized]
         # The "entry" here ISN'T important. It's used for nothing.
+
+[menu]
+    [[menu.main]]
+        name = "Home"
+        weight = 1
+        url = "/"
+    [[menu.main]]
+        name = "Posts"
+        weight = 3
+        url = "posts/"
+    [[menu.main]]
+        name = "CV"
+        weight = 4
+        url = "https://docs.google.com/document/d/1qNj6_wLQJnJtVbOBkM99N94Z2yn7Z4RENIwnd247NXA/edit?usp=sharing"
