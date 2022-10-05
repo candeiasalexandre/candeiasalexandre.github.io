@@ -20,7 +20,7 @@ Assume that we have a (calibrated) network of $N$cameras $(C_1, C_2, …, C_N)$,
 
 The problem of Multiview 3D reconstruction uses the 2D information present in each camera image $(P_{2d}^{C_1}, P_{2d}^{C_2}, ..., P_{2d}^{C_N})$ to reconstruct the 3D points $P_{3d} \in \R^{3 \times K}$ which are represented in red in the image (1).
 
-![Image 1: Multiview 3D human keypoints reconstruction.](/posts/multiview-3d-reconstruction/img/image_1.png)
+![Image 1: Multiview 3D human keypoints reconstruction.](/posts/img/multiview-3d-reconstruction/image_1.png)
 
 Image 1: Multiview 3D human keypoints reconstruction.
 
@@ -66,7 +66,7 @@ However, we can solve the above equations with respect to $p_{3d}$ , i.e an unde
 
 Before discussing the general $N$ views case, we will discuss the scenario where you have $2$ views, i.e two cameras, looking at a 3D point as shown in image 2.
 
-![Image 2: Stereo Reconstruction](/posts/multiview-3d-reconstruction/img/image_2.png)
+![Image 2: Stereo Reconstruction](/posts/img/multiview-3d-reconstruction/image_2.png)
 
 Image 2: Stereo Reconstruction
 
