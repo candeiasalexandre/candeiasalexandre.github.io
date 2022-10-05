@@ -4,6 +4,9 @@ title = ''
 theme = "color-your-world"
 paginate = 3
 
+[markup.goldmark.renderer]
+    unsafe= true
+
 [params]
   
     # Site description
