@@ -29,7 +29,7 @@ Image 1: Multiview 3D human keypoints reconstruction.
 Before discussing how we can perform 3D reconstruction, it is worth to study how is the mathematical formulation of a simple ([pin-hole](https://en.wikipedia.org/wiki/Pinhole_camera)) camera.
 
 A camera is a mathematical transformation that projects points from the 3D world in 2D.  For a given 3D point in the camera reference frame, $p_{3d} \in \R^3$ ,  it can be defined as the function:
-
+ 
 $$
   f(p_{3d}) = p_{2d} \in \R^{2} = 
   \begin{bmatrix}
