@@ -6,11 +6,11 @@ date: 2023-05-13
 katexExtensions : [ mhchem, copy-tex ]
 ---
 
-Many times, we find ML problems that can be approached as classification but, after digging into it, we notice that there are hierarchical or ordering relationships between our classes.
+Many times we find ML problems that can be approached as classification, but after digging into it, we notice that there are hierarchical or ordering relationships between our classes.
 
-For example, imagine that you are doing review rating prediction. Given an user review you want to give it a score from 1-5. An approach, might be to see the problem as a text classification where there are 5 classes, one for each of the possible ratings.
+For example, imagine that you are doing review rating prediction. Given an user review you want to give it a score from 1-5. An approach might be to see the problem as a text classification where there are 5 classes, one for each of the possible ratings.
 
-For the sake of simplicity imagine that your text is simply represented by an embedding vector, $x \in R^d$.  One can use a simple model such a linear classifier given by the function $F(x) = softmax(Wx + b)$, where the model parameters are the matrix $W \in R^{5 \times d}$ and the vector $b \in R^5$. 
+For the sake of simplicity imagine that your text is simply represented by an embedding vector $x \in R^d$.  One can use a simple model such a linear classifier given by the function $F(x) = softmax(Wx + b)$, where the model parameters are the matrix $W \in R^{5 \times d}$ and the vector $b \in R^5$. 
 
 This model is predicting a probability distribution $p(\hat{y}|x$) across every possible rating $[1, 2,3,4,5]$.
 
@@ -92,7 +92,7 @@ making the loss higher when the prediction is more distant from the label.
 
 At a first glance, one might think that with this loss we accomplished our goal and we can now put our model training and have great results…. However, we need to take a closer look of what happens with the gradients of this new loss. 
 
-The first part of the loss is fine since is the standard cross entropy, however the second part might cause problems. Think a bit of how one would calculate the gradient of $\arg \max$ with respect to the model parameters. 
+The first part of the loss is fine since is the standard cross entropy however, the second part might cause problems. Think a bit of how one would calculate the gradient of $\arg \max$ with respect to the model parameters. 
 
 In fact, the $\arg \max$ might not even be differentiable making it difficult to calculate gradients. For an in depth mathematical analysis regarding $\arg \max$ please check [this](https://arxiv.org/pdf/2301.07473.pdf) paper from the (awesome) [SARDINE](https://sardine-lab.github.io/) NLP group in Lisbon.
 
@@ -119,7 +119,7 @@ We arrive at the conclusion **that the gradients of the two losses** (computed a
 
 This poses a challenge since even though the loss is capturing what we want, the gradients are not and that will make the updates on the model parameters unaware of the ordering structure.
 
-In the 2nd part of this blogpost, we will see how to solve this issue by introducing another type of regularisation that doesn’t have the non differential issue but still captures the ordering relationships of our classes.
+In the 2nd part of this blogpost we will see how to solve this issue by introducing another type of regularisation that doesn’t have the non differential issue but still captures the ordering relationships of our classes.
 
 **You can find the code used in this post [here](https://github.com/candeiasalexandre/ordinal-classification-loss/tree/main).**
 
@@ -127,4 +127,4 @@ Thanks for bearing with me and my awful math notation. See you soon :)
 
 *Acknowledgements*
 
-Most of the ideias present in this blogpost are a result of discussions with my work colleague [Ivo Silva](https://www.linkedin.com/in/ivo-silva-744021109/).
+Most of the ideas present in this blogpost are a result of discussions with my work colleague [Ivo Silva](https://www.linkedin.com/in/ivo-silva-744021109/).
