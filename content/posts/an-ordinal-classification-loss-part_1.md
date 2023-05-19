@@ -46,9 +46,9 @@ where $ F_{y_{n}}(x) $ represents the $y_{n}$ entry of the output probability, a
 Now that we know the formula of the loss lets see some examples. Imagine that the output of your model is something as follows:
 
 $$
-    F[x_1] = [0.1, 0.2, 0.3, 0.4, 0.5] \\\
-    F[x_2] = [0.5, 0.4, 0.3, 0.2,0.1] \\\
-    F[x_3] = [0.1, 0.5, 0.4, 0.3, 0.2]
+    F[x_1] = softmax([0.1, 0.2, 0.3, 0.4, 0.5]) \\\
+    F[x_2] = softmax([0.5, 0.4, 0.3, 0.2,0.1]) \\\
+    F[x_3] = softmax([0.1, 0.5, 0.4, 0.3, 0.2])
 $$
 
 This means that for $x_1$ the model puts more probability in the review score 5, for $x_2$ in 1 and for $x_3$ in the review score 2.
