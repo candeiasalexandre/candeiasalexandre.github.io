@@ -2,6 +2,9 @@ baseURL = 'https://candeiasalexandre.github.io/'
 languageCode = 'en-us'
 title = ''
 theme = "color-your-world"
+googleAnalytics = "G-STBQ2DT4EZ"
+enableRobotsTXT = true
+
 paginate = 3
 
 [markup.goldmark.renderer]
