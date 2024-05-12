@@ -1,6 +1,6 @@
 baseURL = 'https://candeiasalexandre.github.io/'
 languageCode = 'en-us'
-title = 'Alexandre Candeias Website'
+title = ''
 theme = "color-your-world"
 googleAnalytics = "G-STBQ2DT4EZ"
 enableRobotsTXT = true

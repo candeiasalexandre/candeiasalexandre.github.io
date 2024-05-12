@@ -1,4 +1,6 @@
 ---
+title           : "Alexandre Candeias Website"
+description     : "Alexandre Candeias Website"
 disableTitleSeparator : true
 ---
 
