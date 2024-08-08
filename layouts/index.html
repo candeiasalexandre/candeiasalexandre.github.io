@@ -5,6 +5,15 @@
   <main class="index">
 
     {{ if .Content }}
+      <meta
+        property="og:image"
+        content="{{ if .Params.image }}{{.Site.BaseURL}}/carrers/{{.Params.image}}
+        {{ else }}
+          {{ .Params.ogimage }}
+        {{
+          end
+        }}"
+      />
       <article>
       
         <header>

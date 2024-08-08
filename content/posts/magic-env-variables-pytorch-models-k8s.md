@@ -4,6 +4,7 @@ description     : "Magic ENV variables for (Py)Torch models in K8s"
 katex           : true
 date: 2024-08-08
 katexExtensions : [ mhchem, copy-tex ]
+image: /posts/img/magic-env-variables-pytorch-models-k8s/image-throtling.png
 ---
 
 
