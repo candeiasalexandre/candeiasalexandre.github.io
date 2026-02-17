@@ -1,3 +1,10 @@
+---
+title           : "Playing with OpenClip & ONNX"
+description     : "Playing with OpenClip & ONNX"
+katex           : true
+date: 2026-02-17
+katexExtensions : [ mhchem, copy-tex ]
+---
 
 Lately I've been involved on implementing vector search at multiple e-commerce websites, a common challenge that always pops up is how to serve the encoder model that is responsible to translate the user query (text) into a vector (numbers).
 
