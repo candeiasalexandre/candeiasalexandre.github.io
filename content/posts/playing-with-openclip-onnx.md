@@ -21,7 +21,8 @@ We will try 4 different scenarios:
 
 We putted all of these scenarios in a `pytest-benchmark` and we run it for the different scenarios always with the same input text:  `Example of a query to encode for vector search! {i}` and with variable batch sizes (`[1, 2, 4, 8]`).
 
-![[content/posts/img/playing-with-openclip-onnx/benchmark.png]]
+
+![](/posts/img/playing-with-openclip-onnx/benchmark.png)
 
 (**_NOTE:_**  You can run the same benchmark, simply go to our [repo](https://github.com/candeiasalexandre/openclip-perf-experiments/blob/main/src/openclip_perf_experiments/cli/export_mclip_roberta.py) and check the README instructions, in this case I ran it on Apple M3 Pro CPU)
 
